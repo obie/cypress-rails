@@ -8,13 +8,19 @@ module CypressRails
       @finds_bin = FindsBin.new
     end
 
-    def call(dir: Dir.pwd, port: ENV["RAILS_CYPRESS_PORT"])
+    def call(dir: Dir.pwd, port: ENV["RAILS_CYPRESS_PORT"], record_key: ENV["CYPRESS_RECORD_KEY"])
       @starts_rails_server.call(dir: dir, port: port)
       bin = @finds_bin.call(dir)
 
-      system <<~EXEC
-        CYPRESS_BASE_URL=http://#{Capybara.server_host}:#{Capybara.server_port} #{bin} run --project "#{dir}"
-      EXEC
+      cmd = %(CYPRESS_BASE_URL=http://#{Capybara.server_host}:#{Capybara.server_port} #{bin} run --project \"#{dir}\")
+
+      if record_key
+        cmd += " --record --key #{record_key}"
+      end
+
+      binding.pry
+
+      system(cmd)
     end
   end
 end
