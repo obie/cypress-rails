@@ -18,8 +18,6 @@ module CypressRails
         cmd += " --record --key #{record_key}"
       end
 
-      binding.pry
-
       system(cmd)
     end
   end
